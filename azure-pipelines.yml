@@ -49,6 +49,13 @@ steps:
       New-item $(System.DefaultWorkingDirectory)\cert.cer
       Set-Content $(System.DefaultWorkingDirectory)\cert.cer $(terraform-asb-ns-publisher-app-cert-fromtf)
 
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(System.DefaultWorkingDirectory)'
+    Contents: 'cert.cer'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)\Azure-App-Registration'
+    OverWrite: true
+
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'

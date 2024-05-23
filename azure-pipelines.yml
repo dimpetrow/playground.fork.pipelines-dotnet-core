@@ -53,6 +53,8 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      New-Item -Path .\pub -ItemType Directory
+      New-Item -Path .\sub -ItemType Directory
       New-item $(System.DefaultWorkingDirectory)\pub\cert_fromazpipelines.cer
       New-item $(System.DefaultWorkingDirectory)\sub\cert_fromazpipelines.cer
       Set-Content $(System.DefaultWorkingDirectory)\pub\cert_fromazpipelines.cer $(terraform-asb-ns-publisher-app-cert-fromtf)

@@ -42,17 +42,28 @@ steps:
     SecretsFilter: 'terraform-asb-ns-publisher-app-cert-fromtf'
     RunAsPreJob: false
 
+- task: AzureKeyVault@2
+  inputs:
+    azureSubscription: 'Azure subscription 1(4c0f7d2c-780c-4f06-9877-efbc70ecf40d)'
+    KeyVaultName: 'dp-playground-kv'
+    SecretsFilter: 'terraform-asb-ns-consumer-app-cert-fromtf'
+    RunAsPreJob: false
+
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
     script: |
-      New-item $(System.DefaultWorkingDirectory)\cert.cer
-      Set-Content $(System.DefaultWorkingDirectory)\cert.cer $(terraform-asb-ns-publisher-app-cert-fromtf)
+      New-item $(System.DefaultWorkingDirectory)\pub\cert_fromazpipelines.cer
+      New-item $(System.DefaultWorkingDirectory)\sub\cert_fromazpipelines.cer
+      Set-Content $(System.DefaultWorkingDirectory)\pub\cert_fromazpipelines.cer $(terraform-asb-ns-publisher-app-cert-fromtf)
+      Set-Content $(System.DefaultWorkingDirectory)\sub\cert_fromazpipelines.cer $(terraform-asb-ns-consumer-app-cert-fromtf)
 
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(System.DefaultWorkingDirectory)'
-    Contents: 'cert.cer'
+    Contents: |
+      pub\cert_fromazpipelines.cer
+      sub\cert_fromazpipelines.cer
     TargetFolder: '$(Build.ArtifactStagingDirectory)\Azure-App-Registration'
     OverWrite: true
 

@@ -59,13 +59,19 @@ steps:
       New-item $(System.DefaultWorkingDirectory)\sub\cert_fromazpipelines.cer
       Set-Content $(System.DefaultWorkingDirectory)\pub\cert_fromazpipelines.cer $(terraform-asb-ns-publisher-app-cert-fromtf)
       Set-Content $(System.DefaultWorkingDirectory)\sub\cert_fromazpipelines.cer $(terraform-asb-ns-consumer-app-cert-fromtf)
+      $kvSecretBytes = [System.Convert]::FromBase64String("$(terraform-asb-ns-publisher-app-cert-fromtf)")
+      $certCollection = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2Collection
+      $certCollection.Import($kvSecretBytes,$null,[System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable)
+      $protectedCertificateBytes = $certCollection.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Pkcs12, $password)
+      $pfxPath = $(System.DefaultWorkingDirectory) + "\pub\MyCert.pfx"
+      [System.IO.File]::WriteAllBytes($pfxPath, $protectedCertificateBytes)
 
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(System.DefaultWorkingDirectory)'
     Contents: |
-      pub\cert_fromazpipelines.cer
-      sub\cert_fromazpipelines.cer
+      pub\**
+      sub\**
     TargetFolder: '$(Build.ArtifactStagingDirectory)\Azure-App-Registration'
     OverWrite: true
 

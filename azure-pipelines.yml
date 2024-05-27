@@ -63,7 +63,7 @@ steps:
       $certCollection = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2Collection
       $certCollection.Import($kvSecretBytes,$null,[System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable)
       $protectedCertificateBytes = $certCollection.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Pkcs12, $password)
-      $pfxPath = $(System.DefaultWorkingDirectory) + "\pub\MyCert.pfx"
+      $pfxPath = "$(System.DefaultWorkingDirectory)" + "\pub\MyCert.pfx"
       [System.IO.File]::WriteAllBytes($pfxPath, $protectedCertificateBytes)
 
 - task: CopyFiles@2

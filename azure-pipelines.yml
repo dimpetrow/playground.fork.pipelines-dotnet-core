@@ -59,25 +59,6 @@ steps:
       New-item $(System.DefaultWorkingDirectory)\sub\cert_fromazpipelines.cer
       Set-Content $(System.DefaultWorkingDirectory)\pub\cert_fromazpipelines.cer $(terraform-asb-ns-publisher-app-cert-fromtf)
       Set-Content $(System.DefaultWorkingDirectory)\sub\cert_fromazpipelines.cer $(terraform-asb-ns-consumer-app-cert-fromtf)
-      
-      $kvSecretBytes = [System.Convert]::FromBase64String("$(terraform-asb-ns-publisher-app-cert-fromtf)")
-      $pfxPathRawBytes = "$(System.DefaultWorkingDirectory)" + "\pub\MyCert_RawBytes.pfx"
-      [System.IO.File]::WriteAllBytes($pfxPathRawBytes, $kvSecretBytes)
-      
-      $kvSecretStr = [System.Convert]::ToBase64String($kvSecretBytes)
-      New-item $(System.DefaultWorkingDirectory)\pub\MyCert_KvSecretToBytesArrayAndBack.cer
-      Set-Content $(System.DefaultWorkingDirectory)\pub\MyCert_KvSecretToBytesArrayAndBack.cer $kvSecretStr
-
-      $certCollection = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2Collection
-      $certCollection.Import($kvSecretBytes,$null,[System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable)
-      $protectedCertificateBytes = $certCollection.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Pkcs12)
-      $pfxPath = "$(System.DefaultWorkingDirectory)" + "\pub\MyCert.pfx"
-      [System.IO.File]::WriteAllBytes($pfxPath, $protectedCertificateBytes)
-      
-      $protectedCertificateStr = [System.Convert]::ToBase64String($protectedCertificateBytes)
-      New-item $(System.DefaultWorkingDirectory)\pub\MyCert_ProtectedCertificateToBytesArrayAndBack.cer
-      Set-Content $(System.DefaultWorkingDirectory)\pub\MyCert_ProtectedCertificateToBytesArrayAndBack.cer $protectedCertificateStr
-
 
 - task: CopyFiles@2
   inputs:
